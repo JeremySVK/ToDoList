@@ -7,6 +7,7 @@
         </div>
 
         <div class="modal-body">
+            
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Task title</label>
                 <input type="text" name="title" class="form-control" value="{{ old('title') }}" id="exampleFormControlInput1" placeholder="title">
@@ -42,12 +43,11 @@
                 @endforeach
 
             </div>
+
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Deadline</label>
                 <input type="date" name="deadline" class="form-control" value="{{ old('deadline') }}">
             </div>
-
-
         </div>
 
         <div class="modal-footer">

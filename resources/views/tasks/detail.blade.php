@@ -26,14 +26,17 @@
                         <label for="exampleFormControlInput1" class="form-label">Task title: </label>
                         <input type="text" value="{{ $task->title }}" name="title" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
                     </div>
+
                     <div class="mb-3">
                         <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
                         <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="3"> {{ $task->description }} </textarea>
                     </div>
+
                     <div class="mb-3">
                         <label for="exampleFormControlInput1" class="form-label">Deadline</label>
                         <input type="date" name="deadline" value="{{ $task->deadline }}" class="form-control">
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label"> Status: </label>
                         <select name="status_id" class="form-select" aria-label="Default select example">
@@ -45,6 +48,7 @@
 
                         </select>
                     </div>
+
                     <div>
                         <label class="form-label"> Tags: </label>
                         <br>

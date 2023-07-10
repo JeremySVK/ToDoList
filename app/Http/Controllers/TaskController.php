@@ -25,8 +25,7 @@ class TaskController extends Controller
         $data = Status::query()
             ->with(['tasks','tasks.tags', 'tasks.subTasks'])
             ->get();
-
-
+        
         return view('tasks.home', [
             'tags' => $tags,
             'data' => $data,
@@ -53,13 +52,11 @@ class TaskController extends Controller
 
         $statuses = Status::query()->get();
 
-
         return view('tasks.detail', [
             'task' => $task,
             'tags' => $tags,
             'statuses' => $statuses
         ]);
-
     }
 
     /**
@@ -131,7 +128,6 @@ class TaskController extends Controller
         $task->subTasks()->delete();
         $task->delete();
 
-        return redirect()->route('home')->with('status', 'Task ' . $task->title . ' has been deleted' );
-
+        return redirect()->route('home')->with('status', 'Task ' . $task->title . ' has been deleted');
     }
 }
