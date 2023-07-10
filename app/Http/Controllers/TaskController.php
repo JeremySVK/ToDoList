@@ -117,11 +117,11 @@ class TaskController extends Controller
 
         return redirect()->route('home')->with('status', 'Task <strong>' . $task->title . '</strong> has been modified');
     }
-    
+
     /**
      * destroy
      *
-     * @param  mixed $id
+     * @param  int $id
      * @return View with status
      */
     public function destroy($id)
