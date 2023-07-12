@@ -150,7 +150,7 @@
                     .then(response => {
                         this.getTasks();
                     })
-
+            
             },
 
             deleteTask(id, statusIndex) {

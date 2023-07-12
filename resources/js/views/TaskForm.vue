@@ -71,7 +71,7 @@ import TaskConfig from './TaskConfig';
 
 export default {
     name: 'TaskForm',
-    
+
     props: {
         apiUrl: {
             type: String,
@@ -115,7 +115,6 @@ export default {
             axios.post(this.apiUrl + 'store', this.data)
                 .then(response => {
                     console.log(response.data);
-
                 })
         }
     },
