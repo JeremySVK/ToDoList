@@ -7,7 +7,9 @@
                     <Transition name="slide-fade">
                         <task-form v-if="show"
                             :apiUrl="apiUrl"
-                            :statuses="statuses">
+                            :statuses="statuses"
+                            :method="toggleShow"
+                            >
                         </task-form>
                     </Transition>
                     <button type="button" class="btn btn-primary">New Tag</button>
@@ -53,14 +55,15 @@
                                 </li>
                             </ul>
 
-                            <button type="button" class="btn btn-primary" @click="toggleShow">New Sub Task</button>
+                            <!-- <button type="button" class="btn btn-primary" @click="toggleShow">New Sub Task</button>
                             <Transition name="slide-fade">
                                 <task-form v-if="show"
                                     :apiUrl="apiUrl"
                                     :parentTask="task.id"
-                                    :statuses="statuses">
+                                    :statuses="statuses"
+                                    >
                                 </task-form>
-                            </Transition>
+                            </Transition> -->
 
                             <button class="btn btn-primary mt-2">
                                 <router-link :to="{name: 'task-detail', params: {id: task.id}}" style="color: white;">Detail</router-link>
@@ -150,7 +153,7 @@
                     .then(response => {
                         this.getTasks();
                     })
-            
+
             },
 
             deleteTask(id, statusIndex) {

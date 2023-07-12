@@ -81,11 +81,5 @@ export default {
             ],
         }
     },
-
-    // tableFields: (app) => {
-    //     return [
-
-    //     ]
-    // }
 }
 

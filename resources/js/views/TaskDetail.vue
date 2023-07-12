@@ -40,6 +40,7 @@
                         <label class="form-check-label" :for="tag.id"> {{ tag.title }}</label>
                     </div>
                 </div>
+                <button type="submit" id="submit" @click="saveChanges()" class="btn btn-primary">Save changes</button>
 
                 <div class="row">
                     <div class="col-12 pt-3">
@@ -98,7 +99,7 @@ export default {
             tags: [],
         };
     },
-
+    
     mounted() {
 
     },
@@ -133,6 +134,13 @@ export default {
                 }).catch(error => {
                     // this.axiosError(error)
                 });
+        },
+        saveChanges() {
+            axios.post(this.apiUrl + 'edit-task/' + this.$route.params.id, this.data)
+                .then(response => {
+                    console.log(response.data)
+                    this.getTask()
+                })
         }
 
     },

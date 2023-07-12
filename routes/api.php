@@ -25,8 +25,9 @@ Route::prefix('task')->controller(TaskController::class)->group(function () {
     Route::get('/tag-list', 'getTags');
     Route::get('/status-list', 'getStatuses');
     Route::post('/store', 'store');
-    
+
     Route::post('/edit-status/{id}', 'update')->name('editTaskStatus');
+    Route::post('/edit-task/{id}', 'update')->name('editTask');
     Route::get('/detail/{id}', 'show');
     Route::post('/delete/{id}', 'destroy');
 });

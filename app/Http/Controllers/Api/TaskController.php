@@ -8,6 +8,7 @@ use App\Models\Task;
 use App\Models\Tag;
 use App\Models\Status;
 use App\Http\Requests\StoreTaskRequest;
+use Illuminate\Http\JsonResponse;
 
 class TaskController extends Controller
 {
@@ -32,7 +33,7 @@ class TaskController extends Controller
     /**
      * tagsList
      *
-     * @return void
+     * @return JsonResponse
      */
     public function getTags()
     {
@@ -56,28 +57,8 @@ class TaskController extends Controller
      * Display a specific resource
      *
      * @param  int $id
-     * @return JsonResponse
+     * @return JsonResponse with resource
      */
-
-    // public function show($id)
-    // {
-    //     $task = Task::query()->with(['tags', 'subTasks.tags'])
-    //         ->findOrFail($id);
-
-    //     $subTasks = $task->subTasks()->paginate(5);
-
-    //     $task->setRelation('subTasks', $subTasks);
-
-    //     $tags = Tag::query()->get();
-
-    //     $statuses = Status::query()->get();
-
-    //     return view('tasks.detail', [
-    //         'task' => $task,
-    //         'tags' => $tags,
-    //         'statuses' => $statuses
-    //     ]);
-    // }
     public function show($id)
     {
         $task = Task::query()->with(['status','tags', 'subTasks' => function($q)
@@ -87,8 +68,6 @@ class TaskController extends Controller
         }])
             ->findOrFail($id);
 
-        info($task);
-
         return response()->json($task);
     }
 
@@ -97,7 +76,7 @@ class TaskController extends Controller
      * Store a newly created resource
      *
      * @param  StoreRequest $request
-     * @return void
+     * @return JsonResponse with status
      */
     public function store(StoreTaskRequest $request)
     {
@@ -116,7 +95,7 @@ class TaskController extends Controller
      *
      * @param  Request $request
      * @param  int $id
-     * @return  View with status
+     * @return  JsonResponse with status
      */
     public function update(Request $request, $id)
     {
@@ -145,11 +124,12 @@ class TaskController extends Controller
 
             return back();
         }
+        info($request['tags']);
 
         // edit whole task.
-        $task = Task::query()->updateOrCreate(['id' => $id], $request->except(['_token','tags']));
+        $task = Task::query()->updateOrCreate(['id' => $id], $request->except(['_token','tags', 'sub_tasks']));
 
-        $task->tags()->sync($request['tags']);
+        // $task->tags()->sync($request['tags']);
 
         return redirect()->route('home')->with('status', 'Task <strong>' . $task->title . '</strong> has been modified');
     }

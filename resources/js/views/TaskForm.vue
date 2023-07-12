@@ -4,16 +4,15 @@
 
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Add Task</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" @click="method" aria-label="Close"></button>
             </div>
-
+            
             <div class="modal-body">
 
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Task title</label>
                     <input type="text" name="title" class="form-control" v-model="data.title" id="exampleFormControlInput1" placeholder="title">
                 </div>
-                {{ console.log(data.title) }}
                 <input type="radio" name="parent_task_id" :value="this.parentTask" v-model="data.parent_task_id">
 
                 <div class="mb-3">
@@ -47,7 +46,6 @@
                             v-model="data.tags">
                         <label class="form-check-label" :for="tag.id"> {{ tag.title }}</label>
                     </div>
-                    {{ console.log(data.tags) }}
                 </div>
 
                 <div class="mb-3">
@@ -57,7 +55,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" @click="method" class="btn btn-secondary">Close</button>
                 <button type="submit" id="submit" @click="saveTask()" class="btn btn-primary">Save changes</button>
             </div>
 
@@ -84,6 +82,9 @@ export default {
         parentTask: {
             type: Number,
             required: false,
+        },
+        method: {
+            type: Function,
         },
     },
 
