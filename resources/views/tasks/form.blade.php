@@ -7,7 +7,7 @@
         </div>
 
         <div class="modal-body">
-            
+
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Task title</label>
                 <input type="text" name="title" class="form-control" value="{{ old('title') }}" id="exampleFormControlInput1" placeholder="title">
@@ -26,7 +26,7 @@
                     <option value="3">High</option>
                 </select>
             </div>
-
+            
             <div>
                 <label class="form-label"> Tags: </label>
                 <br>

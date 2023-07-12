@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\Tag;
@@ -13,13 +14,10 @@ class TaskController extends Controller
     /**
      * Display list of resources
      *
-     * @return View
+     * @return JsonResponse
      */
     public function index()
     {
-        $tags = Tag::query()->get();
-
-        $statuses = Status::query()->get();
 
         $data = Status::query()
             ->with(['tasks' => function($q) {
@@ -28,38 +26,72 @@ class TaskController extends Controller
             }])
             ->get();
 
-        return view('tasks.home', [
-            'tags' => $tags,
-            'data' => $data,
-            'statuses' => $statuses,
-        ]);
+        return response()->json($data);
     }
 
+    /**
+     * tagsList
+     *
+     * @return void
+     */
+    public function getTags()
+    {
+        $tags = Tag::query()->get();
+
+        return response()->json($tags);
+    }
+
+    /**
+     * statusList
+     *
+     * @return void
+     */
+    public function getStatuses()
+    {
+        $statuses = Status::query()->get();
+
+        return response()->json($statuses);
+    }
     /**
      * Display a specific resource
      *
      * @param  int $id
-     * @return View
+     * @return JsonResponse
      */
+
+    // public function show($id)
+    // {
+    //     $task = Task::query()->with(['tags', 'subTasks.tags'])
+    //         ->findOrFail($id);
+
+    //     $subTasks = $task->subTasks()->paginate(5);
+
+    //     $task->setRelation('subTasks', $subTasks);
+
+    //     $tags = Tag::query()->get();
+
+    //     $statuses = Status::query()->get();
+
+    //     return view('tasks.detail', [
+    //         'task' => $task,
+    //         'tags' => $tags,
+    //         'statuses' => $statuses
+    //     ]);
+    // }
     public function show($id)
     {
-        $task = Task::query()->with(['tags', 'subTasks.tags'])
+        $task = Task::query()->with(['status','tags', 'subTasks' => function($q)
+        {
+            $q->with('status');
+            $q->with('tags');
+        }])
             ->findOrFail($id);
 
-        $subTasks = $task->subTasks()->paginate(5);
+        info($task);
 
-        $task->setRelation('subTasks', $subTasks);
-
-        $tags = Tag::query()->get();
-
-        $statuses = Status::query()->get();
-
-        return view('tasks.detail', [
-            'task' => $task,
-            'tags' => $tags,
-            'statuses' => $statuses
-        ]);
+        return response()->json($task);
     }
+
 
     /**
      * Store a newly created resource
@@ -69,13 +101,14 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        $task = Task::query()->create($request->except('tags'));
-
-        info($request['tags']);
+        info($request);
+        $task = Task::query()->create($request->except('tags', 'subTasks', 'status'));
 
         $task->tags()->attach($request['tags']);
 
-        return back()->with('status', 'Task ' . $task->title . 'has been modified');
+        $message = 'Task ' . $task->title . 'has been modified';
+
+        return response()->json($message);
     }
 
     /**
@@ -87,6 +120,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         // check if only status is being changed
         if($request->routeIs('editTaskStatus'))
         {
@@ -111,6 +145,7 @@ class TaskController extends Controller
 
             return back();
         }
+
         // edit whole task.
         $task = Task::query()->updateOrCreate(['id' => $id], $request->except(['_token','tags']));
 
@@ -123,7 +158,7 @@ class TaskController extends Controller
      * destroy
      *
      * @param  int $id
-     * @return View with status
+     * @return JsonResponse with status
      */
     public function destroy($id)
     {
@@ -132,6 +167,7 @@ class TaskController extends Controller
         $task->subTasks()->delete();
         $task->delete();
 
-        return redirect()->route('home')->with('status', 'Task ' . $task->title . ' has been deleted');
+        $message = 'Task ' . $task->title . 'has been deleted';
+        return response()->json($message);
     }
 }

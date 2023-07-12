@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +17,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::prefix('task')->controller(TaskController::class)->group(function () {
+
+    Route::get('/', 'index');
+    Route::get('/tag-list', 'getTags');
+    Route::get('/status-list', 'getStatuses');
+    Route::post('/store', 'store');
+    
+    Route::post('/edit-status/{id}', 'update')->name('editTaskStatus');
+    Route::get('/detail/{id}', 'show');
+    Route::post('/delete/{id}', 'destroy');
 });

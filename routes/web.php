@@ -19,14 +19,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware([TestMiddleware::class])->group(function () {
+Route::controller(TaskController::class)->group(function () {
 
-    Route::get('/home', [TaskController::class, 'index'])->name('home');
-    Route::post('/store-task', [TaskController::class, 'store'])->name('storeTask');
-    Route::get('/detail/{id}', [TaskController::class, 'show'])->name('taskDetail');
-    Route::delete('/delete-task/{id}', [TaskController::class, 'destroy'])->name('deleteTask');
-    Route::post('/edit-task-status/{id}', [TaskController::class, 'update'])->name('editTaskStatus');
-    Route::post('/edit-task/{id}', [TaskController::class, 'update'])->name('editTask');
+    Route::middleware([TestMiddleware::class])->group(function () {
+
+        Route::get('/home',  'index')->name('home');
+        Route::post('/store-task', 'store')->name('storeTask');
+        Route::get('/detail/{id}', 'show')->name('taskDetail');
+        Route::delete('/delete-task/{id}', 'destroy')->name('deleteTask');
+        Route::post('/edit-task-status/{id}', 'update')->name('editTaskStatus');
+        Route::post('/edit-task/{id}',  'update')->name('editTask');
+
+    });
 
 });
+
+Route::get('/task/{any?}', function () {
+    return view('welcome');
+})->where('any', '.*');
 
