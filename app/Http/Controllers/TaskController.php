@@ -71,7 +71,7 @@ class TaskController extends Controller
     {
         $task = Task::query()->create($request->except('tags'));
 
-        info($request['tags']);
+        // info($request['tags']);
 
         $task->tags()->attach($request['tags']);
 
@@ -113,6 +113,8 @@ class TaskController extends Controller
         }
         // edit whole task.
         $task = Task::query()->updateOrCreate(['id' => $id], $request->except(['_token','tags']));
+
+        // info($request['tags']);
 
         $task->tags()->sync($request['tags']);
 

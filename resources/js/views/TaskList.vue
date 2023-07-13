@@ -1,88 +1,87 @@
 <template>
-<div class="container">
+    <div class="container">
         <div class="row pt-5 mb-2">
             <div class="col-12">
                 <div class="d-grid gap-2 d-md-block">
-                    <button type="button" class="btn btn-primary" @click="toggleShow">New Task</button>
+                    <button type="button" class="btn btn-primary m-1" @click="toggleShow">New Task</button>
                     <Transition name="slide-fade">
-                        <task-form v-if="show"
+                        <task-form v-show="show"
                             :apiUrl="apiUrl"
-                            :statuses="statuses"
+                            :statuses="statusesArr"
+                            :tasksArray="data"
                             :method="toggleShow"
                             >
                         </task-form>
                     </Transition>
-                    <button type="button" class="btn btn-primary">New Tag</button>
+                    <button type="button" class="btn btn-primary m-1">New Tag</button>
                 </div>
             </div>
         </div>
-
         <div class="row" style="border: 1px solid lightgrey; border-radius:10px; min-width:100%; align-content:center">
-            <div class="col-4" v-for="(status, statusIndex) in data.statuses">
+            <div v-if="data.statuses" class="col-4" v-for="(status, statusIndex) in data.statuses">
                 <div class="col-12" dropzone="true"
                     @drop="onDrop($event, status.id, statusIndex)"
                     @dragenter.prevent
                     @dragover.prevent
                 >
-
                     <h1>{{ status.title }}</h1>
-                    <div v-for="(task, index) in status.tasks" :key="task.id">
-                        <div class="card-mt-2 task-card" v-if="(task.parent_task_id == null)"
-                            draggable="true"
-                            @dragstart="startDrag($event, task, statusIndex)"
-                        >
+                    <div v-if="status.tasks" v-for="(task, index) in status.tasks" :key="task.id">
+                            <div class="card-mt-2 task-card" v-if="(task.parent_task_id == null)"
+                                draggable="true"
+                                @dragstart="startDrag($event, task, statusIndex)"
+                            >
 
-                            <div class="m-1">
-                            <button type="submit" @click="deleteTask(task.id, statusIndex)" class="btn btn-danger"> X </button>
+                                <div class="m-1">
+                                <button type="submit" @click="deleteTask(task.id, statusIndex)" class="btn btn-danger"> X </button>
+                                </div>
+
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ task.title }}</h5> <strong>deadline:</strong> {{ task.deadline }}
+                                    <p class="card-text">{{ task.description }}</p>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title"> Tags: </h6>
+                                    <span class="btn btn-success m-1" v-for="(tag, index) in task.tags">
+                                        {{ tag.title }}
+                                    </span>
+                                </div>
+                                <ul class="list-group list group-flush">
+                                    <li class="list-group-item"> <strong>Sub-tasks:</strong> </li>
+                                    <li class="list-group-item" v-for="(subTask, index) in task.sub_tasks">
+                                        <strong>{{ subTask.title }}</strong>
+                                        {{ subTask.description }}
+                                        <br>
+                                    </li>
+                                </ul>
+
+                                <!-- <button type="button" class="btn btn-primary" @click="toggleShow">New Sub Task</button>
+                                <Transition name="slide-fade">
+                                    <task-form v-if="show"
+                                        :apiUrl="apiUrl"
+                                        :parentTask="task.id"
+                                        :statuses="statuses"
+                                        >
+                                    </task-form>
+                                </Transition> -->
+
+                                <button v-if="task.id" class="btn btn-primary mt-2">
+                                    <router-link :to="{name: 'task-detail', params: {id: task.id}}" style="color: white;">Detail</router-link>
+                                </button>
                             </div>
-
-                            <div class="card-body">
-                                <h5 class="card-title">{{ task.title }}</h5> <strong>deadline:</strong> {{ task.deadline }}
-                                <p class="card-text">{{ task.description }}</p>
-                            </div>
-                            <div class="card-body">
-                                <h6 class="card-title"> Tags: </h6>
-                                <span class="btn btn-success m-1" v-for="(tag, index) in task.tags">
-                                    {{ tag.title }}
-                                </span>
-                            </div>
-                            <ul class="list-group list group-flush">
-                                <li class="list-group-item"> <strong>Sub-tasks:</strong> </li>
-                                <li class="list-group-item" v-for="(subTask, index) in task.sub_tasks">
-                                    <strong>{{ subTask.title }}</strong>
-                                    {{ subTask.description }}
-                                    <br>
-                                </li>
-                            </ul>
-
-                            <!-- <button type="button" class="btn btn-primary" @click="toggleShow">New Sub Task</button>
-                            <Transition name="slide-fade">
-                                <task-form v-if="show"
-                                    :apiUrl="apiUrl"
-                                    :parentTask="task.id"
-                                    :statuses="statuses"
-                                    >
-                                </task-form>
-                            </Transition> -->
-
-                            <button class="btn btn-primary mt-2">
-                                <router-link :to="{name: 'task-detail', params: {id: task.id}}" style="color: white;">Detail</router-link>
-                            </button>
                         </div>
-                    </div>
 
                 </div>
             </div>
 
         </div>
-</div>
+    </div>
 </template>
 
 <script>
-    import axios from 'axios'
-    import TaskConfig from '@/views/TaskConfig'
-    import TaskForm from '@/views/TaskForm.vue'
-    import { ref } from 'vue'
+    import axios from 'axios';
+    import TaskConfig from '@/views/TaskConfig';
+    import TaskForm from '@/views/TaskForm.vue';
+    import { ref } from 'vue';
 
     export default {
         name: 'TaskList',
@@ -90,13 +89,24 @@
             const show = ref(false);
 
             const toggleShow = () => {
-            show.value = !show.value;
+                show.value = !show.value;
             };
 
             return {
-            show,
-            toggleShow,
+                show,
+                toggleShow,
             };
+        },
+        computed: {
+            statusesArr() {
+                const statusesArray = this.data.statuses.map(status => {
+                    return {
+                        id: status.id,
+                        title: status.title
+                    };
+                });
+                return statusesArray;
+            }
         },
 
         data() {
@@ -107,23 +117,11 @@
             };
         },
 
-        mounted() {
-
-        },
-
         created() {
             this.getTasks();
-            this.getStatuses();
         },
 
         methods: {
-
-            getStatuses() {
-                axios.get(this.apiUrl + 'status-list')
-                    .then(response => {
-                        this.statuses = response.data
-                    })
-            },
 
             getTasks() {
                 axios.get(this.apiUrl)
@@ -131,14 +129,14 @@
                         this.data.statuses = response.data;
                     })
                     .catch(error => {
-                        // this.axiosError(error)
+                        this.$toaster.error(error);
                     });
             },
 
             startDrag(event, task, statusIndex) {
-                event.dataTransfer.dropEffect = 'move',
+                event.dataTransfer.dropEffect = 'move'
                 event.dataTransfer.effectAllowed = 'move'
-                event.dataTransfer.setData('taskID', task.id,)
+                event.dataTransfer.setData('taskID', task.id)
                 event.dataTransfer.setData('statusIndex', statusIndex)
             },
 
@@ -161,12 +159,11 @@
                 const index = this.data.statuses[statusIndex].tasks.findIndex(task => task.id === id);
                 this.data.statuses[statusIndex].tasks.splice(index, 1);
 
-                console.log(index);
                 axios.post(this.apiUrl + 'delete/' + id)
                     .then(response => {
-                        console.log(response.data)
+                        this.$toast.info(response.data);
                     }).catch(error => {
-                        // this.axiosError(error)
+                        this.$toast.error(error);
                     });
             }
         },

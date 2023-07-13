@@ -6,6 +6,7 @@
 
 import './bootstrap';
 import router from './router';
+import Toaster from '@meforma/vue-toaster';
 
 import { createApp } from 'vue';
 
@@ -39,4 +40,8 @@ app.component('navigation-component', NavigationComponent);
  */
 
 app.use(router);
+app.use(Toaster, {
+    position: 'top',
+    duration: 3000
+});
 app.mount('#app');

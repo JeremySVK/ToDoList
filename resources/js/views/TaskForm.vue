@@ -6,18 +6,18 @@
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Add Task</h1>
                 <button type="button" class="btn-close" @click="method" aria-label="Close"></button>
             </div>
-            
-            <div class="modal-body">
 
+            <div class="modal-body">
                 <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Task title</label>
-                    <input type="text" name="title" class="form-control" v-model="data.title" id="exampleFormControlInput1" placeholder="title">
+                    <label for="titleInput" class="form-label">Task title</label>
+                    <input type="text" name="title" class="form-control" v-model="data.title" id="titleInput" placeholder="title">
+                    <span style="color: red" v-if="v$.$error"> {{ (v$.data.title.$errors[0].$message) }} </span>
                 </div>
-                <input type="radio" name="parent_task_id" :value="this.parentTask" v-model="data.parent_task_id">
 
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">Task description</label>
                     <textarea class="form-control" name="description" v-model="data.description" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    <span style="color: red" v-if="v$.$error"> {{ (v$.data.description.$errors[0].$message) }} </span>
                 </div>
 
                 <div class="mb-3">
@@ -49,8 +49,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Deadline</label>
-                    <input type="date" name="deadline" class="form-control" v-model="data.deadline">
+                    <label for="deadline" class="form-label">Deadline</label>
+                    <input type="date" id="deadline" name="deadline" class="form-control" v-model="data.deadline">
                 </div>
             </div>
 
@@ -66,11 +66,18 @@
 <script>
 import axios from 'axios';
 import TaskConfig from './TaskConfig';
+import useValidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+
 
 export default {
     name: 'TaskForm',
 
     props: {
+        tasksArray: {
+            type: Object,
+            required: false,
+        },
         apiUrl: {
             type: String,
             required: true,
@@ -90,9 +97,21 @@ export default {
 
     data() {
         return {
+            v$: useValidate(),
             data: TaskConfig.singleTask(),
+            // parent_task_id: this.parentTask,
             tags: [],
+
         };
+    },
+    validations() {
+        return {
+            data: {
+                title: { required },
+                description: { required },
+            }
+
+        }
     },
 
     mounted() {
@@ -101,6 +120,7 @@ export default {
 
     created() {
         this.getTags()
+
     },
 
     methods: {
@@ -113,10 +133,26 @@ export default {
         },
 
         saveTask() {
-            axios.post(this.apiUrl + 'store', this.data)
+            if (this.parentTask) {
+                this.data.parent_task_id = this.parentTask
+            }
+            console.log(this.v$);
+            this.v$.data.$validate()
+            if (!this.v$.$error)
+            {
+                axios.post(this.apiUrl + 'store', this.data)
                 .then(response => {
-                    console.log(response.data);
+                    this.$toast.success(response.data);
+                    
+                    const statusArrayIndex = this.tasksArray.statuses.findIndex(status => status.id === this.data.status_id);
+                    this.tasksArray.statuses[statusArrayIndex].tasks.push(this.data);
+                }).catch(error => {
+                    this.$toast.error(error);
                 })
+            } else {
+                this.$toast.error('Form failed validation check for errors');
+            }
+
         }
     },
 };

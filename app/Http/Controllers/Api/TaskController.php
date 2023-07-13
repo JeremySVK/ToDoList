@@ -61,16 +61,14 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = Task::query()->with(['status','tags', 'subTasks' => function($q)
-        {
-            $q->with('status');
-            $q->with('tags');
-        }])
-            ->findOrFail($id);
+        $task = Task::query()->with(['status','tags'])->findOrFail($id);
+
+        $subTasks = $task->subTasks()->with('status','tags')->paginate(4);
+
+        $task->setRelation('subTasks', $subTasks);
 
         return response()->json($task);
     }
-
 
     /**
      * Store a newly created resource
@@ -85,7 +83,7 @@ class TaskController extends Controller
 
         $task->tags()->attach($request['tags']);
 
-        $message = 'Task ' . $task->title . 'has been modified';
+        $message = 'Task: ' . $task->title . ' has been created';
 
         return response()->json($message);
     }
@@ -129,7 +127,7 @@ class TaskController extends Controller
         // edit whole task.
         $task = Task::query()->updateOrCreate(['id' => $id], $request->except(['_token','tags', 'sub_tasks']));
 
-        // $task->tags()->sync($request['tags']);
+        $task->tags()->sync($request['tags']);
 
         return redirect()->route('home')->with('status', 'Task <strong>' . $task->title . '</strong> has been modified');
     }
