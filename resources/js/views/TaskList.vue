@@ -7,7 +7,7 @@
                     <Transition name="slide-fade">
                         <task-form v-show="show"
                             :apiUrl="apiUrl"
-                            :statuses="statusesArr"
+                            :statuses="statuses"
                             :tasksArray="data"
                             :method="toggleShow"
                             >
@@ -54,22 +54,12 @@
                                     </li>
                                 </ul>
 
-                                <!-- <button type="button" class="btn btn-primary" @click="toggleShow">New Sub Task</button>
-                                <Transition name="slide-fade">
-                                    <task-form v-if="show"
-                                        :apiUrl="apiUrl"
-                                        :parentTask="task.id"
-                                        :statuses="statuses"
-                                        >
-                                    </task-form>
-                                </Transition> -->
-
                                 <button v-if="task.id" class="btn btn-primary mt-2">
                                     <router-link :to="{name: 'task-detail', params: {id: task.id}}" style="color: white;">Detail</router-link>
                                 </button>
                             </div>
                         </div>
-
+                
                 </div>
             </div>
 
@@ -98,7 +88,8 @@
             };
         },
         computed: {
-            statusesArr() {
+
+            statuses() {
                 const statusesArray = this.data.statuses.map(status => {
                     return {
                         id: status.id,
@@ -110,10 +101,10 @@
         },
 
         data() {
+
             return {
                 apiUrl: '/api/task/',
                 data: TaskConfig.data(),
-                statuses: [],
             };
         },
 

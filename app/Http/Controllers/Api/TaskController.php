@@ -61,11 +61,20 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = Task::query()->with(['status','tags'])->findOrFail($id);
+        $task = Task::query()->with(['status', 'tags'])->findOrFail($id);
 
         $subTasks = $task->subTasks()->with('status','tags')->paginate(4);
 
         $task->setRelation('subTasks', $subTasks);
+
+        // $tagsArr =
+
+        $task->tags = $task->tags->transform(function ($tag) {
+            return $tag->id;
+        })->toArray();;
+
+
+        info($task);
 
         return response()->json($task);
     }
@@ -129,7 +138,8 @@ class TaskController extends Controller
 
         $task->tags()->sync($request['tags']);
 
-        return redirect()->route('home')->with('status', 'Task <strong>' . $task->title . '</strong> has been modified');
+        $message = 'Task: ' . $task->title . ' has been modified';
+        return response()->json($message);
     }
 
     /**

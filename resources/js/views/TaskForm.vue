@@ -46,6 +46,8 @@
                             v-model="data.tags">
                         <label class="form-check-label" :for="tag.id"> {{ tag.title }}</label>
                     </div>
+                    <span style="color: red" v-if="v$.$error"> {{ (v$.data.tags.$errors[0].$message) }} </span>
+
                 </div>
 
                 <div class="mb-3">
@@ -109,8 +111,8 @@ export default {
             data: {
                 title: { required },
                 description: { required },
+                tags: {required }
             }
-
         }
     },
 
@@ -143,7 +145,7 @@ export default {
                 axios.post(this.apiUrl + 'store', this.data)
                 .then(response => {
                     this.$toast.success(response.data);
-                    
+
                     const statusArrayIndex = this.tasksArray.statuses.findIndex(status => status.id === this.data.status_id);
                     this.tasksArray.statuses[statusArrayIndex].tasks.push(this.data);
                 }).catch(error => {

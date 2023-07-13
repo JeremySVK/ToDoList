@@ -30,6 +30,7 @@
                 <div>
                     <label class="form-label"> Tags: </label>
                     <br>
+
                     <div class="form-check form-check-inline" v-for="(tag, tagIndex) in this.tags">
                         <input class="form-check-input"
                                 name="tags[]"
@@ -44,7 +45,7 @@
                 </div>
                 <button type="submit" id="submit" @click="saveChanges()" class="btn btn-primary m-2">Save changes</button>
 
-                <button type="button" class="btn btn-primary  m-2" @click="toggleShow">New sub taskTask</button>
+                <button v-if="!data.parent_task_id" type="button" class="btn btn-primary  m-2" @click="toggleShow">New sub taskTask</button>
                     <Transition name="slide-fade">
                         <task-form v-show="show"
                             :apiUrl="apiUrl"
@@ -180,8 +181,10 @@ export default {
         saveChanges() {
             axios.post(this.apiUrl + 'edit-task/' + this.$route.params.id, this.data)
                 .then(response => {
-                    console.log(response.data)
+                    this.$toast.success(response.data)
                     this.getTask()
+                }).catch(error => {
+                    this.$toast.error(error)
                 })
         }
 
