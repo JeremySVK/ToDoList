@@ -71,8 +71,6 @@ class TaskController extends Controller
     {
         $task = Task::query()->create($request->except('tags'));
 
-        // info($request['tags']);
-
         $task->tags()->attach($request['tags']);
 
         return back()->with('status', 'Task ' . $task->title . 'has been modified');
@@ -101,7 +99,7 @@ class TaskController extends Controller
 
                 // throw an error
                 if($activeSubTasks > 1) {
-                    return back()->with('status', 'Some associated tasks are not marked as done.');
+                    return response()->with('status', 'Some associated tasks are not marked as done.');
                 }
             }
 

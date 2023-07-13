@@ -101,9 +101,7 @@ export default {
         return {
             v$: useValidate(),
             data: TaskConfig.singleTask(),
-            // parent_task_id: this.parentTask,
             tags: [],
-
         };
     },
     validations() {
@@ -122,7 +120,6 @@ export default {
 
     created() {
         this.getTags()
-
     },
 
     methods: {
@@ -133,7 +130,7 @@ export default {
                     this.tags = response.data
                 })
         },
-
+        
         saveTask() {
             if (this.parentTask) {
                 this.data.parent_task_id = this.parentTask

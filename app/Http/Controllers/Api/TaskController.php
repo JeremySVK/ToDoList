@@ -45,7 +45,7 @@ class TaskController extends Controller
     /**
      * statusList
      *
-     * @return void
+     * @return JsonResponse
      */
     public function getStatuses()
     {
@@ -67,14 +67,9 @@ class TaskController extends Controller
 
         $task->setRelation('subTasks', $subTasks);
 
-        // $tagsArr =
-
         $task->tags = $task->tags->transform(function ($tag) {
             return $tag->id;
         })->toArray();;
-
-
-        info($task);
 
         return response()->json($task);
     }
@@ -106,7 +101,6 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         // check if only status is being changed
         if($request->routeIs('editTaskStatus'))
         {
@@ -154,7 +148,7 @@ class TaskController extends Controller
 
         $task->subTasks()->delete();
         $task->delete();
-
+        
         $message = 'Task ' . $task->title . 'has been deleted';
         return response()->json($message);
     }

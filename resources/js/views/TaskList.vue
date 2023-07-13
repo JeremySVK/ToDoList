@@ -59,7 +59,7 @@
                                 </button>
                             </div>
                         </div>
-                
+
                 </div>
             </div>
 
@@ -75,6 +75,7 @@
 
     export default {
         name: 'TaskList',
+
         setup() {
             const show = ref(false);
 
@@ -87,6 +88,7 @@
                 toggleShow,
             };
         },
+
         computed: {
 
             statuses() {
@@ -142,7 +144,6 @@
                     .then(response => {
                         this.getTasks();
                     })
-
             },
 
             deleteTask(id, statusIndex) {

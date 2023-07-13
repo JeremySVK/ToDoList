@@ -1,7 +1,10 @@
 <template>
     <div>
         <nav class="navigation">
-            <router-link to="/task/home"> Tasks </router-link>
+            <button class="btn btn-primary m-3">
+                <router-link to="/task/home" style="color: white"> Dashboard </router-link>
+
+            </button>
         </nav>
         <div class="App-content">
             <router-view />
@@ -17,7 +20,7 @@
 
         data() {
             return {
-            
+
             };
         },
 
